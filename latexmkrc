@@ -17,5 +17,6 @@ do './buildscripts.pl';
 
 add_examples(
     "docs",
+    "docs_fsections",
     "slides",
 );

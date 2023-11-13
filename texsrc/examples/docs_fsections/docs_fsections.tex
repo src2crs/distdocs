@@ -1,0 +1,24 @@
+\documentclass[a4paper]{scrartcl}
+
+\usepackage{distdocs}
+
+\usepackage{lipsum}
+\usepackage{todonotes}
+
+\title{Multi Part Document using \texttt{fsection} Commands }
+\author{Reiner Hüchting}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\todo[inline]{
+    This document is still quite messy and hard to understand.
+    It serves for testing, but it should be cleaned up and commented
+    to be a good example and template.
+}
+
+\importsubdir{sections}
+
+\end{document}

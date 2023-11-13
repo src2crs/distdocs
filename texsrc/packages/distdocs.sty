@@ -1,7 +1,10 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{distdocs}[2023/11/13 v0.0.1 DistDocs]
 
+\RequirePackage{etoolbox}
 \RequirePackage{import}
+
+\ExplSyntaxOn
 
 % Import a subdirectory using a main file.
 % This uses the import package, so subsequent \input calls will also search
@@ -28,3 +31,80 @@
     \subsection{#1}
     \importsubdir{#2}[#3]
 }
+
+% Counter for the depth of the current fsection.
+\newcounter{ddocs@fsectiondepth}
+\setcounter{ddocs@fsectiondepth}{1}
+
+% Command to start sections according to the current depth.
+% Also increments the fsection depth counter.
+% #1: Star for starred sections.
+% #2: The section's title.
+% TODO: For now, only section and below are supported.
+\NewDocumentCommand{\ddocs@fsection}{ s m }{
+    \IfBooleanTF{#1}{
+        \int_case:nnF {\value{ddocs@fsectiondepth}} {
+            {1}{\section*{#2}}
+            {2}{\subsection*{#2}}
+            {3}{\subsubsection*{#2}}
+            {4}{\paragraph*{#2}}
+            {5}{\subparagraph*{#2}}
+        }{
+            \PackageError{distdocs}{Invalid fsection depth: #1}{}
+        }
+    }{
+        \int_case:nnF {\value{ddocs@fsectiondepth}} {
+            {1}{\section{#2}}
+            {2}{\subsection{#2}}
+            {3}{\subsubsection{#2}}
+            {4}{\paragraph{#2}}
+            {5}{\subparagraph{#2}}
+        }{
+            \PackageError{distdocs}{Invalid fsection depth: #1}{}
+        }
+    }
+    \stepcounter{ddocs@fsectiondepth}
+}
+
+% Command to end fsections.
+% Decrements the fsection depth counter.
+\NewDocumentCommand{\ddocs@endfsection}{}{
+    \addtocounter{ddocs@fsectiondepth}{-1}
+}
+
+% Environment that starts a new section, subsection, etc. according to the current depth.
+% Increments the fsection depth counter at the beginning, so that subsequent
+% fsection environments will start at the correct depth.
+% #1: The section's title.
+\NewDocumentEnvironment{fsection}{ m }{
+    \ddocs@fsection{#1}
+}{
+    \ddocs@endfsection
+}
+% starred version
+\NewDocumentEnvironment{fsection*}{ m }{
+    \ddocs@fsection*{#1}
+}{
+    \ddocs@endfsection
+}
+
+%Inputs a subdirectory as an fsection using a main file from that directory.
+% This uses the import package, so subsequent \input calls will also search
+% for files in the given directory.
+% #1: star for starred fsection.
+% #2: The section's title.
+% #3: The directory to use.
+% #4: The section's main file. Defaults to the same name as the directory.
+\NewDocumentCommand{\importfsection}{ s m m O{#3} }{
+    \IfBooleanTF{#1}{
+        \begin{fsection*}{#2}
+            \importsubdir{#3}[#4]
+        \end{fsection*}
+    }{
+        \begin{fsection}{#2}
+            \importsubdir{#3}[#4]
+        \end{fsection}
+    }
+}
+
+\ExplSyntaxOff

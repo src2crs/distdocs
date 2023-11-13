@@ -1,0 +1,23 @@
+\makeatletter
+
+\ddocs@fsection{Plain \texttt{fsection} commands}
+
+    This is already inside an \texttt{fsection}.
+
+    \ddocs@fsection{Nested \texttt{fsection}}
+
+        \ddocs@fsection{Nested sub-\texttt{fsection}}
+
+        \ddocs@endfsection
+
+    \ddocs@endfsection
+
+    \ddocs@fsection{Another nested \texttt{fsection}}
+
+    \ddocs@endfsection
+
+\ddocs@endfsection
+
+Counter: \theddocs@fsectiondepth
+
+\makeatother
