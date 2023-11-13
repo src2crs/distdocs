@@ -36,29 +36,39 @@
 \newcounter{ddocs@fsectiondepth}
 \setcounter{ddocs@fsectiondepth}{1}
 
+% Variable that stores the current fsection's title.
+\csdef{ddocs@fsectiontitle}{}
+
+% Command for inserting the current fsection's title.
+% Analogous to \insertsection, \insertsubsection, etc.
+\NewDocumentCommand{\insertfsection}{}{
+    \csuse{ddocs@fsectiontitle}
+}
+
 % Command to start sections according to the current depth.
 % Also increments the fsection depth counter.
 % #1: Star for starred sections.
 % #2: The section's title.
 % TODO: For now, only section and below are supported.
 \NewDocumentCommand{\ddocs@fsection}{ s m }{
+    \csdef{ddocs@fsectiontitle}{#2}
     \IfBooleanTF{#1}{
         \int_case:nnF {\value{ddocs@fsectiondepth}} {
-            {1}{\section*{#2}}
-            {2}{\subsection*{#2}}
-            {3}{\subsubsection*{#2}}
-            {4}{\paragraph*{#2}}
-            {5}{\subparagraph*{#2}}
+            {1}{\section*{\csuse{ddocs@fsectiontitle}}}
+            {2}{\subsection*{\csuse{ddocs@fsectiontitle}}}
+            {3}{\subsubsection*{\csuse{ddocs@fsectiontitle}}}
+            {4}{\paragraph*{\csuse{ddocs@fsectiontitle}}}
+            {5}{\subparagraph*{\csuse{ddocs@fsectiontitle}}}
         }{
             \PackageError{distdocs}{Invalid fsection depth: #1}{}
         }
     }{
         \int_case:nnF {\value{ddocs@fsectiondepth}} {
-            {1}{\section{#2}}
-            {2}{\subsection{#2}}
-            {3}{\subsubsection{#2}}
-            {4}{\paragraph{#2}}
-            {5}{\subparagraph{#2}}
+            {1}{\section{\csuse{ddocs@fsectiontitle}}}
+            {2}{\subsection{\csuse{ddocs@fsectiontitle}}}
+            {3}{\subsubsection{\csuse{ddocs@fsectiontitle}}}
+            {4}{\paragraph{\csuse{ddocs@fsectiontitle}}}
+            {5}{\subparagraph{\csuse{ddocs@fsectiontitle}}}
         }{
             \PackageError{distdocs}{Invalid fsection depth: #1}{}
         }
@@ -88,7 +98,7 @@
     \ddocs@endfsection
 }
 
-%Inputs a subdirectory as an fsection using a main file from that directory.
+% Inputs a subdirectory as an fsection using a main file from that directory.
 % This uses the import package, so subsequent \input calls will also search
 % for files in the given directory.
 % #1: star for starred fsection.
@@ -105,6 +115,21 @@
             \importsubdir{#3}[#4]
         \end{fsection}
     }
+}
+
+% The following makes only sense for the beamer class.
+% Therefore, we only define them if the beamer class is loaded.
+\@ifclassloaded{beamer}{
+    
+% Creates a beamer frame that uses the current fsection's title as its title.
+% #1: The frame's options.
+\NewDocumentEnvironment{fframe}{ O{} }{
+    \begin{frame}[fragile,environment=fframe,#1]
+        \frametitle{\insertfsection}
+}{
+    \end{frame}
+}
+
 }
 
 \ExplSyntaxOff
