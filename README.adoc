@@ -1,0 +1,7 @@
+= DistDocs
+
+A LaTeX package for managing documents that are distributed over several files.
+
+In addition to basic commands like `\input` and `\include`, DistDocs provides
+commands and environments e.g. for inserting files as sections, or inserting
+complete directories.
