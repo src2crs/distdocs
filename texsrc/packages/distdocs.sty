@@ -52,6 +52,7 @@
 % TODO: For now, only section and below are supported.
 \NewDocumentCommand{\ddocs@fsection}{ s m }{
     \csdef{ddocs@fsectiontitle}{#2}
+    \csdef{currentfsheading}{#2}
     \IfBooleanTF{#1}{
         \int_case:nnF {\value{ddocs@fsectiondepth}} {
             {1}{\section*{\csuse{ddocs@fsectiontitle}}}
